@@ -15,7 +15,7 @@ import java.awt.BasicStroke;
        
        private final static Color BACKGROUND_COLOUR = Color.BLACK;
        private final static int TIMER_DELAY = 5;
-       
+       private final static int BALL_MOVEMENT_SPEED = 2;
        GameState gameState = GameState.INITIALISING;
        
        Ball ball;
@@ -33,21 +33,7 @@ import java.awt.BasicStroke;
            paddle2 = new Paddle(Player.Two, getWidth(), getHeight());
        }
        
-       private void update() {
-           switch(gameState) {
-               case INITIALISING: {
-                   createObjects();
-                   gameState = GameState.PLAYING;
-                   break;
-               }
-               case PLAYING: {
-                   break;
-               }
-               case GAMEOVER: {
-                   break;
-               }
-           }
-       }
+       
        
        private void paintDottedLine(Graphics g) {
           Graphics2D g2d = (Graphics2D) g.create();
@@ -83,7 +69,28 @@ import java.awt.BasicStroke;
            update();
            repaint();
        }
-       
+       private void resetBall() {
+           ball.resetToInitialPosition();
+       }
+       private void checkWallBounce() {
+           if(ball.getXPosition() <= 0) {
+               // Hit left side of screen
+               ball.setXVelocity(-ball.getXVelocity());
+              resetBall();
+          } else if(ball.getXPosition() >= getWidth() - ball.getWidth()) {
+              // Hit right side of screen
+              ball.setXVelocity(-ball.getXVelocity());
+              resetBall();
+          }
+          if(ball.getYPosition() <= 0 || ball.getYPosition() >= getHeight() - ball.getHeight()) {
+              // Hit top or bottom of screen
+              ball.setYVelocity(-ball.getYVelocity());
+          }
+      }
+       private void moveObject(Sprite object) {
+    	      object.setXPosition(object.getXPosition() + object.getXVelocity(),getWidth());
+    	      object.setYPosition(object.getYPosition() + object.getYVelocity(),getHeight());
+    	 }
        @Override
        public void paintComponent(Graphics g) {
            super.paintComponent(g);
@@ -95,4 +102,23 @@ import java.awt.BasicStroke;
    
            }
        }
+       private void update() {
+           switch(gameState) {
+               case INITIALISING: {
+                   createObjects();
+                   gameState = GameState.PLAYING;
+                   ball.setXVelocity(BALL_MOVEMENT_SPEED);
+                   ball.setYVelocity(BALL_MOVEMENT_SPEED);
+                   break;
+              }
+              case PLAYING: {
+                  moveObject(ball);            // Move ball
+                  checkWallBounce();            // Check for wall bounce
+                  break;
+              }
+              case GAMEOVER: {
+                  break;
+              }
+          }
+     }
   }
