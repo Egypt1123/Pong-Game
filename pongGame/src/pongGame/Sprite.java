@@ -62,7 +62,7 @@ public class Sprite {
 		this.width = num;
 	}
 	
-	public void setHight(int num) {
+	public void setHeight(int num) {
 		this.height = num;
 	}
 	

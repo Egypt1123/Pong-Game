@@ -14,7 +14,6 @@ import java.awt.Graphics2D;
 
 import java.awt.Stroke;
 import java.awt.BasicStroke;
-import java.awt.BasicStroke;
 
 public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	
@@ -30,10 +29,23 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 			timer.start();
 		}
 	
-	public void update() {
-		
-	}
+	boolean gameInitialised = false;
+	   Ball ball;
+	        
+	   public void createObjects() {
+	          ball = new Ball(getWidth(), getHeight());
+	   }
 	
+	public void update() {
+		if(!gameInitialised) {
+            createObjects();
+            gameInitialised = true;
+      }
+	}
+	private void paintSprite(Graphics g, Sprite sprite) {
+	     g.setColor(sprite.getColor());
+	     g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getHeight());
+	}
 	private void paintDottedLine(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g.create();
 		Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {9}, 0);
@@ -47,6 +59,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintDottedLine(g);
+		if(gameInitialised) {
+	         paintSprite(g, ball);
+	     }
 	}
 	
 	@Override
@@ -73,7 +88,6 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		repaint();
 		
 	}
-	
 	
 
 }
